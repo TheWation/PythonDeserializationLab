@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import pickle
 import base64
-from urllib.parse import quote, unquote
 
 app = FastAPI()
 
@@ -18,7 +17,7 @@ books = [
 @app.get("/", response_class=HTMLResponse)
 def home():
     book_links = "".join(
-        f'<li><a href="/book?data={quote(base64.b64encode(pickle.dumps(book)).decode())}">{book["title"]}</a></li>'
+        f'<li><a href="/book?data={base64.b64encode(pickle.dumps(book)).decode()}">{book["title"]}</a></li>'
         for book in books
     )
     return f"""
@@ -40,7 +39,7 @@ def home():
 
 @app.get("/book", response_class=HTMLResponse)
 def book_detail(request: Request, data: str):
-    decoded_data = pickle.loads(base64.b64decode(unquote(data)))
+    decoded_data = pickle.loads(base64.b64decode(data))
     return f"""
     <html>
     <head>
